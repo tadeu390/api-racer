@@ -12,5 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $a = \App\Models\Corredor::find(2)->with('provas','resultados')->get();
+
+    dd($a[1]->resultados);
 });
