@@ -41,7 +41,7 @@ php artisan key:generate
 
 Com isso feito, vamos fazer um teste para verificarmos se a api está correntamente configurada e pronta para uso. Para isso, vá ao seu navagador e acesse a seguinte URL:
 ```
-http://localhost
+http://localhost/api
 ```
 A mensagem "API-RACER OK" aparecerá se tudo estiver ok.
 
