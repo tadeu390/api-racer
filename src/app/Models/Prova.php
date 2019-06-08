@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\Prova\ProvaMutator;
 
 class Prova extends Model
 {
+    use ProvaMutator;
     use SoftDeletes;
 
     /**

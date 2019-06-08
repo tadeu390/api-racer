@@ -16,7 +16,9 @@ use App\Models\Corredor;
 
 Route::get('/', function () {
 
-    return response()->json(Corredor::find(1), 200);
+    return response()->json('API-RACER-OK. V 1.0', 200);
 });
 
 Route::post('/corredores', 'CorredorController@store');
+Route::post('/provas', 'ProvaController@store');
+Route::post('/corredoresProvas', 'ProvaController@storeCorredorProva');
