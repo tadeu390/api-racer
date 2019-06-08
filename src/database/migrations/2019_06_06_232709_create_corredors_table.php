@@ -15,8 +15,8 @@ class CreateCorredorsTable extends Migration
     {
         Schema::create('corredores', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nome');
-            $table->string('cpf');
+            $table->string('nome', 100);
+            $table->string('cpf', 11);
             $table->timestamp('data_nascimento');
             $table->timestamps();
             $table->softDeletes();

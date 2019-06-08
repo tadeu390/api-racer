@@ -15,7 +15,7 @@ class CreateProvasTable extends Migration
     {
         Schema::create('provas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('tipo_prova');
+            $table->string('tipo_prova', 15);
             $table->timestamp('data');
             $table->timestamps();
             $table->softDeletes();
