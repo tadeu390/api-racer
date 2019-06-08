@@ -3,9 +3,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\Corredor\CorredorMutator;
 
 class Corredor extends Model
 {
+    use CorredorMutator;
     use SoftDeletes;
 
     /**

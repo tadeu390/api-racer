@@ -10,9 +10,3 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    $a = \App\Models\Corredor::find(2)->with('provas','resultados')->get();
-
-    dd($a[1]->resultados);
-});
