@@ -25,7 +25,7 @@ trait CorredorMutator
         try {
             $this->attributes['data_nascimento'] = \Carbon\Carbon::createFromFormat('d/m/Y', $value);
         } catch(\Exception $e) {
-
+            $this->attributes['data_nascimento'] = \Carbon\Carbon::createFromFormat('Y-m-d', $value);
         }
     }
 }
