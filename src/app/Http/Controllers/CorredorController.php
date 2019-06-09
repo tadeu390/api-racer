@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Services\CorredorService;
 use App\Http\Requests\CorredorRequest;
 
+/**
+ * Classe controladora dos recursos referente aos corredores.
+ */
 class CorredorController extends Controller
 {
     /**
@@ -21,9 +24,10 @@ class CorredorController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Envia para a camada de regra de negócios os dados de um corredor.
      *
      * @param  \Illuminate\Http\Requests\CorredorRequest $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(CorredorRequest $request)
