@@ -29,15 +29,14 @@ class EloquentResultadoRepository extends BaseEloquentRepository implements Resu
     public function listaPorIdade($tipo_prova)
     {
         $result = \DB::select( \DB::raw("
-            SELECT p.id AS prova_id, p.tipo_prova, p.id AS corredor_id, (DATEDIFF(now(), c.data_nascimento) / 365) AS idade,
-            c.nome AS nome_corredor, TIME_TO_SEC(TIMEDIFF(r.horario_fim, r.horario_inicio)) AS tempo
+        SELECT p.id AS prova_id, p.tipo_prova, c.id AS corredor_id, (DATEDIFF(now(), c.data_nascimento) / 365) AS idade,
+        c.nome AS nome_corredor, TIME_TO_SEC(TIMEDIFF(r.horario_fim, r.horario_inicio)) AS tempo
 
-            FROM resultados r
-            INNER JOIN corredor_prova cp ON cp.id = r.corredor_prova_id
-            INNER JOIN corredores c ON c.id = cp.corredor_id
-            INNER JOIN provas p ON p.id = cp.prova_id
-            WHERE p.tipo_prova = :tipo_prova
-            ORDER BY c.data_nascimento DESC
+        FROM resultados r
+        INNER JOIN corredores c ON c.id = r.corredor_id
+        INNER JOIN provas p ON p.id = r.prova_id
+        WHERE p.tipo_prova = :tipo_prova
+        ORDER BY c.data_nascimento DESC
         "), array(
             'tipo_prova' => $tipo_prova
         ));
@@ -53,14 +52,13 @@ class EloquentResultadoRepository extends BaseEloquentRepository implements Resu
     public function listaGeral()
     {
         $result = \DB::select( \DB::raw("
-            SELECT p.id AS prova_id, p.tipo_prova, p.id AS corredor_id, (DATEDIFF(now(), c.data_nascimento) / 365) AS idade,
+            SELECT p.id AS prova_id, p.tipo_prova, c.id AS corredor_id, (DATEDIFF(now(), c.data_nascimento) / 365) AS idade,
             c.nome AS nome_corredor, TIME_TO_SEC(TIMEDIFF(r.horario_fim, r.horario_inicio)) AS tempo
 
             FROM resultados r
-            INNER JOIN corredor_prova cp ON cp.id = r.corredor_prova_id
-            INNER JOIN corredores c ON c.id = cp.corredor_id
-            INNER JOIN provas p ON p.id = cp.prova_id
-            ORDER BY p.tipo_prova
+            INNER JOIN corredores c ON c.id = r.corredor_id
+            INNER JOIN provas p ON p.id = r.prova_id
+            ORDER BY p.tipo_prova DESC
         "));
 
         return $this->posicoesPorProva($result);
