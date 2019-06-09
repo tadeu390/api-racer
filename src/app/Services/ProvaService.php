@@ -41,24 +41,18 @@ class ProvaService
     public function store(array $data)
     {
         try {
-            $prova = $this->repository->store($data);
+            $model = $this->repository->store($data);
 
-            $prova = $this->actions($prova);
-
-            return (object) [
-                'message' => 'success',
-                'object' => $prova,
-                'code' => 201,
+            return [
+                'success' => true,
+                'message' => 'Prova cadastrada com sucesso.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage()
             ];
         }
     }
@@ -74,25 +68,19 @@ class ProvaService
     {
         try {
             $this->validaRegras($data);
-            $object = $this->repository->findById($data['prova_id']);
-            $object->corredores()->attach($data['corredor_id']);
+            $model = $this->repository->findById($data['prova_id']);
+            $model->corredores()->attach($data['corredor_id']);
 
-            $object = $this->actionsCorredorProva($data['corredor_id'], $data['prova_id']);
-
-            return (object) [
-                'message' => 'success',
-                'object' => $object,
-                'code' => 201,
+            return [
+                'success' => true,
+                'message' => 'Corredor inscrito com sucesso na prova.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage()
             ];
         }
     }
@@ -120,7 +108,7 @@ class ProvaService
         $corredor = $this->corredor_repo->findById($corredor_id);
 
         if (!$corredor) {
-            throw new Exception('o Id informado para o corredor não existe na base de dados.', 404);
+            throw new Exception('o Id informado para o corredor não existe na base de dados.');
         }
     }
 
@@ -134,7 +122,7 @@ class ProvaService
         $prova = $this->repository->findById($prova_id);
 
         if (!$prova) {
-            throw new Exception('o Id informado para a prova não existe na base de dados.', 404);
+            throw new Exception('o Id informado para a prova não existe na base de dados.');
         }
     }
 
@@ -146,7 +134,7 @@ class ProvaService
     protected function validaCorredorProva(array $data)
     {
         if ($this->corredorProvaExiste($data) != 0) {
-            throw new Exception('O corredor informado já se encontra cadastrado para esta prova.', 422);
+            throw new Exception('O corredor informado já se encontra cadastrado nessa prova.');
         }
     }
 
@@ -165,7 +153,7 @@ class ProvaService
             $data_prova_corredor = Carbon::parse($prova->data)->format('Y-m-d');
 
             if ($data_prova_corredor == $data_prova) {
-                throw new Exception('O corredor informado já se encontra cadastrado em outra prova que possui a mesma data da prova informada.', 422);
+                throw new Exception('O corredor informado já se encontra cadastrado em outra prova que possui a mesma data da prova informada.');
             }
         }
     }
@@ -183,48 +171,10 @@ class ProvaService
 
         foreach ($prova->corredores as $corredor) {
             if ($corredor->id == $data['corredor_id']) {
-                return $corredor->pivot->id;
+                return true;
             }
         }
 
-        return 0;
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param array $object
-     *
-     * @return Object
-     */
-    protected function actions($prova)
-    {
-        $ob = new \stdClass;
-        $ob->url = url('/provas');
-        $ob->object = $prova;
-
-        return $ob;
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param int $corredor_id
-     * @param int $prova_id
-     *
-     * @return Object
-     */
-    protected function actionsCorredorProva($corredor_id, $prova_id)
-    {
-        $corredor = $this->corredor_repo->findById($corredor_id);
-        $prova = $this->repository->findById($prova_id);
-
-        $ob = new \stdClass;
-        $ob->url = url('/corredoresProvas');
-        $ob->object = new \stdClass;
-        $ob->object->corredor = $corredor;
-        $ob->object->prova = $prova;
-
-        return $ob;
+        return false;
     }
 }

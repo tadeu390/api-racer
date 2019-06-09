@@ -22,7 +22,7 @@ class Resultado extends Model
      * @var array
      */
     protected $fillable = [
-        'horario_inicio', 'horario_fim', 'corredor_prova_id',
+        'horario_inicio', 'horario_fim', 'corredor_id', 'prova_id',
     ];
 
     /**
