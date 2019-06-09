@@ -1,8 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
-use App\Models\Corredor;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,4 +17,7 @@ Route::get('/', function () {
 
 Route::post('/corredores', 'CorredorController@store');
 Route::post('/provas', 'ProvaController@store');
-Route::post('/corredoresProvas', 'ProvaController@storeCorredorProva');
+Route::post('/corredores/provas/inscricao', 'ProvaController@storeCorredorProva');
+Route::post('/provas/resultados', 'ProvaController@resultados');
+Route::get('provas/classificacoes/idade/{tipo_prova?}', 'ProvaController@listaPorIdade');
+Route::get('provas/classificacoes/geral', 'ProvaController@listaGeral');

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Repositories\Contracts\ProvaRepositoryInterface;
@@ -6,6 +7,9 @@ use App\Repositories\Contracts\CorredorRepositoryInterface;
 use Carbon\Carbon;
 use Mockery\CountValidator\Exception;
 
+/**
+ * Camada de regra de negócio referente as provas dos corredores.
+ */
 class ProvaService
 {
     /**
@@ -18,6 +22,9 @@ class ProvaService
      */
     protected $corredor_repo;
 
+    /**
+     * Injeta as dependências necessárias.
+     */
     public function __construct(ProvaRepositoryInterface $repository, CorredorRepositoryInterface $corredor_repo)
     {
         $this->repository = $repository;
@@ -27,20 +34,20 @@ class ProvaService
     /**
      * Responsável por cadastrar uma nova prova.
      *
-     * @param mixed $data
+     * @param array $data
      *
      * @return object
      */
     public function store(array $data)
     {
         try {
-            $object = $this->repository->store($data);
+            $prova = $this->repository->store($data);
 
-            $object = $this->actions($object);
+            $prova = $this->actions($prova);
 
             return (object) [
                 'message' => 'success',
-                'object' => $object,
+                'object' => $prova,
                 'code' => 201,
             ];
         } catch (\Exception $e) {
@@ -59,7 +66,7 @@ class ProvaService
     /**
      * Cadastra um corredor em prova.
      *
-     * @param mixed $data
+     * @param array $data
      *
      * @return object
      */
@@ -93,7 +100,7 @@ class ProvaService
     /**
      * Responsável por chamar todos os métodos que aplicam as regras de negócio.
      *
-     * @param mixed $data
+     * @param array $data
      */
     protected function validaRegras(array $data)
     {
@@ -106,9 +113,9 @@ class ProvaService
     /**
      * Responsável por verificar se existe um corredor com o id informado.
      *
-     * @param string $corredor_id
+     * @param int $corredor_id
      */
-    protected function validaCorredor($corredor_id)
+    public function validaCorredor($corredor_id)
     {
         $corredor = $this->corredor_repo->findById($corredor_id);
 
@@ -120,9 +127,9 @@ class ProvaService
     /**
      * Responsável por verificar se existe uma prova com o id informado.
      *
-     * @param string $prova_id
+     * @param int $prova_id
      */
-    protected function validaProva($prova_id)
+    public function validaProva($prova_id)
     {
         $prova = $this->repository->findById($prova_id);
 
@@ -134,23 +141,19 @@ class ProvaService
     /**
      * Responsável por verificar se o corredor já se encontra na prova em questão.
      *
-     * @param mixed $data
+     * @param array $data
      */
     protected function validaCorredorProva(array $data)
     {
-        $prova = $this->repository->findById($data['prova_id']);
-
-        foreach ($prova->corredores as $corredor) {
-            if ($corredor->id == $data['corredor_id']) {
-                throw new Exception('O corredor informado já se encontra cadastrado para esta prova.', 422);
-            }
+        if ($this->corredorProvaExiste($data) != 0) {
+            throw new Exception('O corredor informado já se encontra cadastrado para esta prova.', 422);
         }
     }
 
     /**
      * Responsável por verificar se o corredor já se encontra numa outra pŕova com a mesma data.
      *
-     * @param mixed $data
+     * @param array $data
      */
     protected function validaCorredorProvaData(array $data)
     {
@@ -168,17 +171,37 @@ class ProvaService
     }
 
     /**
+     * Responsável por verificar se um corredor está cadastrado para uma prova.
+     *
+     * @param array $data
+     *
+     * @return int
+     */
+    public function corredorProvaExiste(array $data)
+    {
+        $prova = $this->repository->findById($data['prova_id']);
+
+        foreach ($prova->corredores as $corredor) {
+            if ($corredor->id == $data['corredor_id']) {
+                return $corredor->pivot->id;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
      * Responsável por adicionar navegações.(HATEOAS)
      *
-     * @param Object $object
+     * @param array $object
      *
      * @return Object
      */
-    protected function actions(object $object)
+    protected function actions($prova)
     {
         $ob = new \stdClass;
         $ob->url = url('/provas');
-        $ob->object = $object;
+        $ob->object = $prova;
 
         return $ob;
     }
