@@ -7,6 +7,9 @@ use App\Services\ProvaService;
 use App\Http\Requests\CorredorProvaRequest;
 use App\Http\Requests\ResultadoRequest;
 use App\Services\ResultadoService;
+use App\Http\Resources\ProvaResource;
+use App\Http\Resources\ResultadoResource;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Classe controladora de recursos referentes a provas.
@@ -41,12 +44,11 @@ class ProvaController extends Controller
      */
     public function store(ProvaRequest $request)
     {
-        $result = $this->prova->store($request->all());
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
+        $model = $this->prova->store($request->all());
 
-        return response()->json($result->message, $result->code);
+        return (new ProvaResource($model))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -58,12 +60,11 @@ class ProvaController extends Controller
      */
     public function storeCorredorProva(CorredorProvaRequest $request)
     {
-        $result = $this->prova->storeCorredorProva($request->all());
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
+        $model = $this->prova->storeCorredorProva($request->all());
 
-        return response()->json($result->message, $result->code);
+        return (new ProvaResource($model))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -73,14 +74,13 @@ class ProvaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function resultados(ResultadoRequest $request)
+    public function storeResultados(ResultadoRequest $request)
     {
-        $result = $this->resultado->store($request->all());
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
+        $model = $this->resultado->store($request->all());
 
-        return response()->json($result->message, $result->code);
+        return (new ResultadoResource($model))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -92,16 +92,11 @@ class ProvaController extends Controller
      */
     public function listaPorIdade($tipo_prova = null)
     {
-        if ($tipo_prova == null) {
-            return response()->json('Argumento tipo da prova não foi informado.', 400);
-        }
+        $model = $this->resultado->listaPorIdade($tipo_prova);
 
-        $result = $this->resultado->listaPorIdade($tipo_prova);
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
-
-        return response()->json($result->message, $result->code);
+        return (new ResultadoResource($model))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -111,11 +106,10 @@ class ProvaController extends Controller
      */
     public function listaGeral()
     {
-        $result = $this->resultado->listaGeral();
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
+        $model = $this->resultado->listaGeral();
 
-        return response()->json($result->message, $result->code);
+        return (new ResultadoResource($model))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }

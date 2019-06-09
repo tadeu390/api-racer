@@ -18,6 +18,6 @@ Route::get('/', function () {
 Route::post('/corredores', 'CorredorController@store');
 Route::post('/provas', 'ProvaController@store');
 Route::post('/corredores/provas/inscricao', 'ProvaController@storeCorredorProva');
-Route::post('/provas/resultados', 'ProvaController@resultados');
+Route::post('/provas/resultados', 'ProvaController@storeResultados');
 Route::get('provas/classificacoes/idade/{tipo_prova?}', 'ProvaController@listaPorIdade');
 Route::get('provas/classificacoes/geral', 'ProvaController@listaGeral');

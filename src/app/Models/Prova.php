@@ -38,6 +38,6 @@ class Prova extends Model
 
     public function corredores()
     {
-        return $this->belongsToMany(Corredor::class)->withPivot('id');
+        return $this->belongsToMany(Corredor::class);
     }
 }

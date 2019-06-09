@@ -40,26 +40,18 @@ class ResultadoService
     {
         try {
             $this->validaRegras($data);
-            $data['corredor_prova_id'] = $this->prova_service->corredorProvaExiste($data);
+            $model = $this->repository->store($data);
 
-            $object = $this->repository->store($data);
-
-            $object = $this->actions($object);
-
-            return (object) [
-                'message' => 'success',
-                'object' => $object,
-                'code' => 201,
+            return [
+                'success' => true,
+                'message' => 'Resultado cadastrado com sucesso.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage()
             ];
         }
     }
@@ -73,8 +65,8 @@ class ResultadoService
     {
         $this->prova_service->validaCorredor($data['corredor_id']);
         $this->prova_service->validaProva($data['prova_id']);
-        if ($this->prova_service->corredorProvaExiste($data) == 0) {
-            throw new Exception('O corredor informado não se encontra cadastrado para esta prova.', 422);
+        if (!$this->prova_service->corredorProvaExiste($data)) {
+            throw new Exception('O corredor informado não se encontra cadastrado para esta prova.');
         }
         $this->validaResultado($data);
     }
@@ -86,12 +78,10 @@ class ResultadoService
      */
     protected function validaResultado($data)
     {
-        $corredor_prova_id = $this->prova_service->corredorProvaExiste($data);
+        $resultado = \App\Models\Resultado::where('corredor_id', $data['corredor_id'])->where('prova_id', $data['prova_id'])->get();
 
-        $resultado = $this->repository->findWhereFirst('corredor_prova_id', $corredor_prova_id);
-
-        if ($resultado) {
-            throw new Exception('Este resultado já se encontra cadastrado na base de dados.', 422);
+        if (count($resultado)) {
+            throw new Exception('Este resultado já se encontra cadastrado na base de dados.');
         }
     }
 
@@ -105,23 +95,18 @@ class ResultadoService
     public function listaPorIdade($tipo_prova)
     {
         try {
-            $object = $this->repository->listaPorIdade($tipo_prova);
-            $object = $this->actionsListaPorIdade($object);
+            $model = $this->repository->listaPorIdade($tipo_prova);
 
-            return (object) [
-                'message' => 'success',
-                'object' => $object,
-                'code' => 200,
+            return [
+                'success' => true,
+                'message' => 'Busca realizada com sucesso.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage()
             ];
         }
     }
@@ -134,72 +119,19 @@ class ResultadoService
     public function listaGeral()
     {
         try {
-            $object = $this->repository->listaGeral();
-            $object = $this->actionsListaGeral($object);
+            $model = $this->repository->listaGeral();
 
-            return (object) [
-                'message' => 'success',
-                'object' => $object,
-                'code' => 200,
+            return [
+                'success' => true,
+                'message' => 'Busca realizada com sucesso.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage()
             ];
         }
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param array $object
-     *
-     * @return array
-     */
-    protected function actions($object)
-    {
-        $ob = new \stdClass;
-        $ob->url = url('/provas/resultados');
-        $ob->object = $object;
-
-        return $ob;
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param array $object
-     *
-     * @return array
-     */
-    protected function actionsListaGeral($object)
-    {
-        $ob = new \stdClass;
-        $ob->url = url('/provas/classificacoes/geral');
-        $ob->object = $object;
-
-        return $ob;
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param Object $object
-     *
-     * @return Object
-     */
-    protected function actionsListaPorIdade($object)
-    {
-        $ob = new \stdClass;
-        $ob->url = url("provas/classificacoes/idade/{$object[0]->tipo_prova}");
-        $ob->object = $object;
-
-        return $ob;
     }
 }
