@@ -30,24 +30,18 @@ class CorredorService
     {
         try {
             $this->validaRegras($data);
-            $object = $this->repository->store($data);
+            $model = $this->repository->store($data);
 
-            $object = $this->actions($object);
-
-            return (object) [
-                'message' => 'success',
-                'object' => $object,
-                'code' => 201,
+            return [
+                'success' => true,
+                'message' => 'Corredor cadastrado com sucesso.',
+                'data'    => $model,
             ];
         } catch (\Exception $e) {
-            $code = $e->getCode();
-            if ($code == 0) {
-                $code = 400;
-            }
-
-            return (object) [
-                'message' => $e->getMessage(),
-                'code' => $code,
+            return [
+                'success' => false,
+                'message' => 'Erro de execução',
+                'data'    => $e->getMessage(),
             ];
         }
     }
@@ -75,29 +69,14 @@ class CorredorService
             try {
                 $data = Carbon::createFromFormat('Y-m-d', $data_nascimento);
             } catch (\Exception $e) {
-                throw new \Exception('O formato da data deve ser d/m/Y ou Y-m-d.', 422);
+                throw new \Exception('O formato da data deve ser d/m/Y ou Y-m-d.');
             }
         }
 
         $idade = Carbon::now()->diff(new Carbon($data))->y >= 18;
 
         if (!$idade) {
-            throw new \Exception('O corredor deve ter pelo menos 18 anos.', 422);
+            throw new \Exception('O corredor deve ter pelo menos 18 anos.');
         }
-    }
-
-    /**
-     * Responsável por adicionar navegações.(HATEOAS)
-     *
-     * @param Object $object
-     *
-     * @return Object
-     */
-    protected function actions(object $object)
-    {
-        $ob = new \stdClass;
-        $ob->url = url('/corredores');
-        $ob->object = $object;
-        return $ob;
     }
 }
