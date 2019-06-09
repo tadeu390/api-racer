@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\CorredorService;
 use App\Http\Requests\CorredorRequest;
+use App\Http\Resources\CorredorResource;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Classe controladora dos recursos referente aos corredores.
@@ -33,10 +35,9 @@ class CorredorController extends Controller
     public function store(CorredorRequest $request)
     {
         $result = $this->corredor->store($request->all());
-        if ($result->message == 'success') {
-            return response()->json($result->object, $result->code);
-        }
 
-        return response()->json($result->message, $result->code);
+        return (new CorredorResource($result))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }

@@ -15,10 +15,12 @@ class CreateResultadosTable extends Migration
     {
         Schema::create('resultados', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('corredor_prova_id')->unsigned();
+            $table->bigInteger('corredor_id')->unsigned();
+            $table->bigInteger('prova_id')->unsigned();
             $table->time('horario_inicio');
             $table->time('horario_fim');
-            $table->foreign('corredor_prova_id')->references('id')->on('corredor_prova')->onDelete('cascade');
+            $table->foreign('corredor_id')->references('id')->on('corredores')->onDelete('cascade');
+            $table->foreign('prova_id')->references('id')->on('provas')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
