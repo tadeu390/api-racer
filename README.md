@@ -50,7 +50,11 @@ Ao acessar a URL, se caso for mostrado na tela algum erro por conta de falta de 
 
 ### 3 - Configurando o banco de dados
 
+No arquivo .env dentro da pasta src/, informe os dados de configuração da base de dados para que a API possa se conectar.
+
 ```
+Host: api-racer-mysql
+Porta: 3306
 Nome do banco de dados: api-racer
 Usuário: api-racer
 Senha: api-racer
