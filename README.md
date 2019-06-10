@@ -1,4 +1,4 @@
-# api-racer
+# API-racer
 API REST para corredores
 
 # Instruções para instalação
