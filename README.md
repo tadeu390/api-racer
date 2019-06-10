@@ -39,16 +39,26 @@ Agora vamos gerar nossa chave de criptografia. Para isso basta executar o comand
 php artisan key:generate
 ```
 
-Com isso feito, vamos fazer um teste para verificarmos se a api está correntamente configurada e pronta para uso. Para isso, vá ao seu navagador e acesse a seguinte URL:
+Com isso feito, vamos fazer um teste para verificarmos se a api está correntamente configurada e pronta para uso. Para isso, vá ao seu navegador e acesse a seguinte URL:
 ```
 http://localhost/api
 ```
-A mensagem "API-RACER OK" aparecerá se tudo estiver ok.
+A mensagem "API-RACER-OK. V 1.0" aparecerá se tudo estiver ok.
 
 ## <b>Nota</b>
 Ao acessar a URL, se caso for mostrado na tela algum erro por conta de falta de permissão, basta apenas dar as permissões aos diretórios necessários.
 
-Por fim, basta executar o comando artisan responsável por executar as migrations.
+### 3 - Configurando o banco de dados
+
+```
+Nome do banco de dados: api-racer
+Usuário: api-racer
+Senha: api-racer
+```
+
+Por fim, dentro da workspace basta executar o comando artisan responsável por executar as migrations.
 ```
 php artisan migrate
 ```
+
+Pronto, API configurada e pronta para uso.
