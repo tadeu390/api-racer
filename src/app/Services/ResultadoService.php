@@ -78,7 +78,10 @@ class ResultadoService
      */
     protected function validaResultado($data)
     {
-        $resultado = \App\Models\Resultado::where('corredor_id', $data['corredor_id'])->where('prova_id', $data['prova_id'])->get();
+        $resultado = $this->repository
+                          ->findWhere('corredor_id', $data['corredor_id'])
+                          ->findWhere('prova_id', $data['prova_id'])
+                          ->get();
 
         if (count($resultado)) {
             throw new Exception('Este resultado já se encontra cadastrado na base de dados.');

@@ -57,9 +57,19 @@ class BaseEloquentRepository implements RepositoryInterface
      */
     public function findWhere($column, $value)
     {
-        $this->entity->where($column, $value)->get();
+        $this->entity->where($column, $value);
 
         return $this;
+    }
+
+    /**
+     * Retorna os resultados da consulta.
+     *
+     * @return array
+     */
+    public function get()
+    {
+        return $this->entity->get();
     }
 
     /**
