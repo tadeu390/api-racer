@@ -38,6 +38,6 @@ class CorredorController extends Controller
 
         return (new CorredorResource($result))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 }
